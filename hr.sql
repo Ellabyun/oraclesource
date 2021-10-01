@@ -254,16 +254,33 @@ SELECT MAX(salary)-MIN(SALARY) AS GAP FROM employees;
 -- 매니저로 근무하는 사원들의 총 수 조회( 단, MANAGER_ID 중복 제고)
 SELECT COUNT(DISTINCT MANAGER_ID) FROM employees;
 
--- 문1] 자신의 담당 매니저의 고용일보다 빠른 입사자 찾기
-select * from employees e1, employees e2 where e1.manager_id = e2.employee_id and e1.hire_date<e2.hire_date;
+-- 문1] 자신의 담당 매니저의 고용일보다 빠른 입사자 찾기(self join)
+select * from employees e1, employees e2 where e1.manager_id = e2.employee_id and e1.hire_date < e2.hire_date;
+
+-- join~on 구문으로 바꾸기
+select * from employees e1 join employees e2 on e1.manager_id = e2.employee_id and e1.hire_date < e2.hire_date;
+
 -- 문2] 도시이름이 T로 시작하는 지역에 사는 사원들의 사번, last_name, 부서번호 조회
 --employees, department테이블 연결, 연결 결과를 locations테이블과 연결
-select e.employee_id, e.last_name, e.department_id 
+select employee_id, last_name, e.department_id 
 from employees e, departments d, locations l
 where e.department_id=d.department_id and d.location_id=l.location_id and city like 'T%';
+
 -- 문3] 위치 id가 1700인 사원들의 last_name, 부서번호, 연봉 조회
 --employees, departments 테이블 연결
-select last_name, e.department_id, salary*12 from employees e, departments d where e.department_id=d.department_id and location_id=1700;
+select last_name, e.department_id, salary 
+from employees e, departments d 
+where e.department_id=d.department_id and location_id=1700;
+
 -- 문4] Executive 부서에 근무하는 모든 사원들의 부서번호, last_name, job_id 조회
 --employees, departments 테이블 연결
-select e.department_id, last_name, job_id from employees e, departments d where e.department_id=d.department_id and department_name='Executive';
+select e.department_id, last_name, job_id 
+from employees e, departments d 
+where e.department_id=d.department_id and department_name='Executive';
+
+-- LAST_NAME에 u가 포함되는 사원들과 동일부서에 근무하는 사원들의 
+-- 사번 및 last_name조회
+
+SELECT employee_id, last_name
+FROM employees 
+WHERE department_id in (SELECT distinct department_id FROM employees WHERE last_name like '%u%');
