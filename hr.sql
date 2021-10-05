@@ -284,3 +284,20 @@ where e.department_id=d.department_id and department_name='Executive';
 SELECT employee_id, last_name
 FROM employees 
 WHERE department_id in (SELECT distinct department_id FROM employees WHERE last_name like '%u%');
+
+-- 21.10.05
+create table indexTBL as select DISTINCT first_name, last_name, hire_date from employees;
+
+select * from indexTBL;
+
+-- 인덱스 생성 전 검색 방식 : Full
+select * from indexTBL where first_name='Jack';
+
+-- 인덱스 생성
+create index idx_indexTBL_firstname on indexTBL(first_name);
+
+-- 인덱스 생성 후 검색 방식 : index 검색(Range scan)
+select * from indexTBL where first_name='Jack';
+
+
+
